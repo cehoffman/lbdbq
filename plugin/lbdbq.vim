@@ -47,14 +47,17 @@ function! LbdbExpandContact(qstring)
     if empty(contacts)  " no matching (long) contact found
       return qstring
     elseif len(contacts) > 1  " multiple matches: disambiguate
-      echo "Choose a recipient for '" . qstring . "':"
-      let choices = []
+      let choices = ["Choose a recipient for '" . qstring . "':"]
       let counter = 0
       for contact in contacts
         let choices += [ printf("%2d. %s <%s>", counter, contact[0], contact[1]) ]
         let counter += 1
       endfor
-      let contact = contacts[inputlist(choices)]
+      let choice = inputlist(choices)
+      if choice > len(choices) || choice < 0
+        return qstring
+      end
+      let contact = contacts[choice]
     else  " len(contacts) == 1, i.e. one single match
       let contact = contacts[0]
     endif
